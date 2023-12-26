@@ -1,0 +1,50 @@
+- hosts: dns2
+  become: yes
+  tasks:
+    - name: set Hostname
+      shell:
+        hostnamectl set-hostname rpdns2.mshome.loc
+
+    - name: Copy IP setup
+      copy:
+        src: ./dhcpcd.conf
+        dest: /etc/dhcpcd.conf
+
+    - name: Install dnsmasq
+      apt:
+        state: latest
+        update_cache: true
+        pkg:
+        - dnsmasq
+
+    - name: Copy dnsmasq.conf
+      copy:
+         src: ./dnsmasq.hosts.new
+         dest: /etc/dnsmasq.conf
+    - name: Start dnsmasq
+      service:
+         name=dnsmasq
+         state=started
+         enabled=yes
+    - name: Add Resolv.conf entries
+      shell: |
+         nmcli connection modify 'Wired connection 1' ipv4.dns 127.0.0.1
+         nmcli connection modify 'Wired connection 1' ipv4.dns-options trust-ad
+         nmcli connection modify 'Wired connection 1' ipv4.ignore-auto-dns yes
+         nmcli connection modify 'Wired connection 1' ipv6.dns ::1
+         nmcli connection modify 'Wired connection 1' ipv6.dns-options trust-ad
+         nmcli connection modify 'Wired connection 1' ipv6.ignore-auto-dns yes     
+#    - name: copy admin.conf to user's kube config
+#      copy:
+#        src: /etc/kubernetes/admin.conf
+#        dest: /home/ubuntu/.kube/config
+#        remote_src: yes
+#        owner: ubuntu
+#
+#    - name: install Pod network
+#      become: yes
+#      become_user: ubuntu
+#      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.log
+#      args:
+#        chdir: $HOME
+#        creates: pod_network_setup.log
