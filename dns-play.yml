@@ -10,7 +10,7 @@
         src: ./rpdns2.dhcpcd.conf
         dest: /etc/dhcpcd.conf
 
-    - name: Install dnsmasq
+    - name: Install dnsmasq and vim
       apt:
         state: latest
         update_cache: true
@@ -20,8 +20,12 @@
 
     - name: Copy dnsmasq.conf
       copy:
-         src: ./dnsmasq.hosts.new
+         src: ./dnsmasq.conf
          dest: /etc/dnsmasq.conf
+    - name: Copy hosts
+      copy:
+         src: ./etchosts.new
+         dest: /etc/hosts
     - name: Start dnsmasq
       service:
          name=dnsmasq
