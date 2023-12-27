@@ -7,7 +7,7 @@
 
     - name: Copy IP setup
       copy:
-        src: ./dhcpcd.conf
+        src: ./rpdns2.dhcpcd.conf
         dest: /etc/dhcpcd.conf
 
     - name: Install dnsmasq
@@ -16,6 +16,7 @@
         update_cache: true
         pkg:
         - dnsmasq
+        - vim
 
     - name: Copy dnsmasq.conf
       copy:
@@ -26,14 +27,14 @@
          name=dnsmasq
          state=started
          enabled=yes
-    - name: Add Resolv.conf entries
-      shell: |
-         nmcli connection modify 'Wired connection 1' ipv4.dns 127.0.0.1
-         nmcli connection modify 'Wired connection 1' ipv4.dns-options trust-ad
-         nmcli connection modify 'Wired connection 1' ipv4.ignore-auto-dns yes
-         nmcli connection modify 'Wired connection 1' ipv6.dns ::1
-         nmcli connection modify 'Wired connection 1' ipv6.dns-options trust-ad
-         nmcli connection modify 'Wired connection 1' ipv6.ignore-auto-dns yes     
+#    - name: Add Resolv.conf entries
+#      shell: |
+#         nmcli connection modify 'Wired connection 1' ipv4.dns 127.0.0.1
+#         nmcli connection modify 'Wired connection 1' ipv4.dns-options trust-ad
+#         nmcli connection modify 'Wired connection 1' ipv4.ignore-auto-dns yes
+#         nmcli connection modify 'Wired connection 1' ipv6.dns ::1
+#         nmcli connection modify 'Wired connection 1' ipv6.dns-options trust-ad
+#         nmcli connection modify 'Wired connection 1' ipv6.ignore-auto-dns yes     
 #    - name: copy admin.conf to user's kube config
 #      copy:
 #        src: /etc/kubernetes/admin.conf
