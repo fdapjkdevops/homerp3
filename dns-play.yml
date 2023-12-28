@@ -10,14 +10,14 @@
         src: ./rpdns2.dhcpcd.conf
         dest: /etc/dhcpcd.conf
 
-    - name: Install dnsmasq and vim
+    - name: Install dnsmasq, vim, dnsutils
       apt:
         state: latest
         update_cache: true
         pkg:
         - dnsmasq
         - vim
-
+        - dnsutils
     - name: Copy dnsmasq.conf
       copy:
          src: ./dnsmasq.conf
