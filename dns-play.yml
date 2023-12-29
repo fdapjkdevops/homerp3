@@ -1,4 +1,4 @@
-- hosts: dns2
+- hosts: dns1
   become: yes
   tasks:
     - name: set Hostname
@@ -7,7 +7,7 @@
 
     - name: Copy IP setup
       copy:
-        src: ./rpdns2.dhcpcd.conf
+        src: ./rpdns1.dhcpcd.conf
         dest: /etc/dhcpcd.conf
 
     - name: Install dnsmasq, vim, dnsutils
@@ -20,7 +20,7 @@
         - dnsutils
     - name: Copy dnsmasq.conf
       copy:
-         src: ./dnsmasq.conf
+         src: ./dnsmasq1.conf
          dest: /etc/dnsmasq.conf
     - name: Copy hosts
       copy:
