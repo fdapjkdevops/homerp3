@@ -1,4 +1,5 @@
 - hosts: dns1
+#- hosts: dns1ping
   become: yes
   tasks:
     - name: set Hostname
