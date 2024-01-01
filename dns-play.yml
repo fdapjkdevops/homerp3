@@ -1,18 +1,28 @@
-- hosts: dns2
+#- hosts: dns2
 #- hosts: dns1ping
+- hosts: alldns
   become: yes
   tasks:
-    - name: set Hostname
+    - name: Test inventory_hostname
+      debug: var=inventory_hostname
+
+    - name: set Hostname for dns1
+      shell:
+        hostnamectl set-hostname rpdns1.mshome.loc
+      when: inventory_hostname == "rpdns1"
+
+    - name: set Hostname for dns2
       shell:
         hostnamectl set-hostname rpdns2.mshome.loc
+      when: inventory_hostname == "rpdns2"
 
     - name: Copy IP setup for dns1
       copy: src=./rpdns1.dhcpcd.conf dest=/etc/dhcpcd.conf
-      when: inventory_hostname == "dns1"
+      when: inventory_hostname == "rpdns1"
 
     - name: Copy IP setup for dns2
       copy: src=./rpdns2.dhcpcd.conf dest=/etc/dhcpcd.conf  
-      when: inventory_hostname == "dns2"
+      when: inventory_hostname == "rpdns2"
 
     - name: Install dnsmasq, vim, dnsutils
       apt:
@@ -26,22 +36,22 @@
       copy:
          src: ./dnsmasq1.base
          dest: /etc/dnsmasq.base
-      when: inventory_hostname == "dns1"
+      when: inventory_hostname == "rpdns1"
 
     - name: Copy dnsmasq.base for dns2
       copy:
          src: ./dnsmasq2.base
          dest: /etc/dnsmasq.base
-      when: inventory_hostname == "dns2"
+      when: inventory_hostname == "rpdns2"
 
     - name: Copy dnsmasq.hosts
       copy:
          src: ./dnsmasq.hosts
-         dest: ./etc/dnsmasq.hosts
+         dest: /etc/dnsmasq.hosts
 
-
-
-
+    - name: Create dnsmasq.conf
+      shell:
+        cat /etc/dnsmasq.base /etc/dnsmasq.hosts > /etc/dnsmasq.conf
 
     - name: Copy hosts
       copy:
