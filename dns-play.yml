@@ -22,10 +22,27 @@
         - dnsmasq
         - vim
         - dnsutils
-    - name: Copy dnsmasq.conf
+    - name: Copy dnsmasq.base for dns1
       copy:
-         src: ./dnsmasq1.conf
-         dest: /etc/dnsmasq.conf
+         src: ./dnsmasq1.base
+         dest: /etc/dnsmasq.base
+      when: inventory_hostname == "dns1"
+
+    - name: Copy dnsmasq.base for dns2
+      copy:
+         src: ./dnsmasq2.base
+         dest: /etc/dnsmasq.base
+      when: inventory_hostname == "dns2"
+
+    - name: Copy dnsmasq.hosts
+      copy:
+         src: ./dnsmasq.hosts
+         dest: ./etc/dnsmasq.hosts
+
+
+
+
+
     - name: Copy hosts
       copy:
          src: ./etchosts.new
