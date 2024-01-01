@@ -1,4 +1,4 @@
-- hosts: dns1
+- hosts: dns2
 #- hosts: dns1ping
   become: yes
   tasks:
@@ -6,10 +6,13 @@
       shell:
         hostnamectl set-hostname rpdns2.mshome.loc
 
-    - name: Copy IP setup
-      copy:
-        src: ./rpdns1.dhcpcd.conf
-        dest: /etc/dhcpcd.conf
+    - name: Copy IP setup for dns1
+      copy: src=./rpdns1.dhcpcd.conf dest=/etc/dhcpcd.conf
+      when: inventory_hostname == "dns1"
+
+    - name: Copy IP setup for dns2
+      copy: src=./rpdns2.dhcpcd.conf dest=/etc/dhcpcd.conf  
+      when: inventory_hostname == "dns2"
 
     - name: Install dnsmasq, vim, dnsutils
       apt:
