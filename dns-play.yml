@@ -1,11 +1,13 @@
 #- hosts: dns2
 #- hosts: dns1ping
-- hosts: alldns
+#- hosts: alldns
+- hosts: dnsclust
   become: yes
   tasks:
     - name: Test inventory_hostname
       debug: var=inventory_hostname
 
+# Hostnames        
     - name: set Hostname for dns1
       shell:
         hostnamectl set-hostname rpdns1.mshome.loc
@@ -16,6 +18,12 @@
         hostnamectl set-hostname rpdns2.mshome.loc
       when: inventory_hostname == "rpdns2"
 
+    - name: set Hostname for dnsclust
+      shell:
+        hostnamectl set-hostname rpdnsclust.mshome.loc
+      when: inventory_hostname == "rpdnsclust"
+
+# IP Address
     - name: Copy IP setup for dns1
       copy: src=./rpdns1.dhcpcd.conf dest=/etc/dhcpcd.conf
       when: inventory_hostname == "rpdns1"
@@ -24,6 +32,11 @@
       copy: src=./rpdns2.dhcpcd.conf dest=/etc/dhcpcd.conf  
       when: inventory_hostname == "rpdns2"
 
+    - name: Copy IP setup for dnsclust
+      copy: src=./rpdnsclust.dhcpcd.conf dest=/etc/dhcpcd.conf
+      when: inventory_hostname == "rpdnsclust"
+
+# Install DNSMASQ, VIM , DNSUTILS
     - name: Install dnsmasq, vim, dnsutils
       apt:
         state: latest
@@ -32,6 +45,8 @@
         - dnsmasq
         - vim
         - dnsutils
+
+# Copy the dnsmasq.base
     - name: Copy dnsmasq.base for dns1
       copy:
          src: ./dnsmasq1.base
@@ -44,6 +59,15 @@
          dest: /etc/dnsmasq.base
       when: inventory_hostname == "rpdns2"
 
+    - name: Copy dnsmasq.base for dnsclust
+      copy:
+         # We use dnsmasq1.base as the source, dnsmasq2 is configured for DHCP
+         # We will change this in jekyll as an add on
+         src: ./dnsmasq1.base
+         dest: /etc/dnsmasq.base
+      when: inventory_hostname == "rpdnsclust"
+
+# Copy over the DNSMASQ.hosts
     - name: Copy dnsmasq.hosts
       copy:
          src: ./dnsmasq.hosts
@@ -52,6 +76,7 @@
     - name: Create dnsmasq.conf
       shell:
         cat /etc/dnsmasq.base /etc/dnsmasq.hosts > /etc/dnsmasq.conf
+
 
     - name: Copy hosts
       copy:
