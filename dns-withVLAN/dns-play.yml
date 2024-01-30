@@ -1,28 +1,26 @@
 #- hosts: dns2
 #- hosts: dns1ping
 #- hosts: alldns
-- hosts: dnsclust
+- hosts: dnsVlan1
   become: yes
   tasks:
     - name: Test inventory_hostname
       debug: var=inventory_hostname
+# Make sure that dhcpcd5 is installed
+    - name: Install dhcpcd5
+      apt:
+        state: latest
+        update_cache: true
+        pkg:
+        - dhcpcd5
 
 # Hostnames        
     - name: set Hostname for dns1
       shell:
-        hostnamectl set-hostname rpdns1.mshome.loc
-      when: inventory_hostname == "rpdns1"
+        hostnamectl set-hostname rpdnsVlan1
+      when: inventory_hostname == "rpdnsVlan1"
 
-    - name: set Hostname for dns2
-      shell:
-        hostnamectl set-hostname rpdns2.mshome.loc
-      when: inventory_hostname == "rpdns2"
-
-    - name: set Hostname for dnsclust
-      shell:
-        hostnamectl set-hostname rpdnsclust.mshome.loc
-      when: inventory_hostname == "rpdnsclust"
-
+# - Leaving IP as set.  Ubiquiti Cloudkey 
 # IP Address
     - name: Copy IP setup for dns1
       copy: src=./rpdns1.dhcpcd.conf dest=/etc/dhcpcd.conf
