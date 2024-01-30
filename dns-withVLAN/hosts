@@ -1,0 +1,5 @@
+[dnsVlan1]
+rpdnsVlan1 ansible_host=192.168.1.50
+
+[allnodes]
+192.168.1.50
