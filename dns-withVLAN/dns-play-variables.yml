@@ -1,0 +1,76 @@
+greeting: Hello world!
+dnsHosts:
+  - host_name: RPDNS1
+    host_dhcp: 10.1.0.50
+    host_static: 10.1.0.19
+    dns_primary: 10.1.0.19
+    dns_secondary: 10.1.0.18
+#  - host_name: RPDNSVLAN2
+#    host_dhcp: 10.1.0.51
+#    host_static: 10.1.0.18
+#    dns_primary: 10.1.0.19
+#    dns_secondary: 10.1.0.18
+
+vlanSingle:
+   con_name: FORREST8
+   dev: eth0
+   id: 8
+   ip: 10.8.0.9/24
+   gw: 10.8.0.1
+vlans:
+   - con_name: FORREST8
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  8
+     ipaddr: 10.8.0.9/24
+     gwaddr: 10.8.0.1
+
+   - con_name: STINGRAY43
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  43
+     ipaddr: 10.43.0.9/23
+     gwaddr: 10.43.0.1
+
+   - con_name: RENTER66
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  66
+     ipaddr: 10.66.0.9/24
+     gwaddr: 10.66.0.1
+
+   - con_name: BRINKS69
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  69
+     ipaddr: 10.69.0.9/23
+     gwaddr: 10.69.0.1
+
+   - con_name: GUEST71
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  71
+     ipaddr: 10.71.0.9/23
+     gwaddr: 10.71.0.1
+
+   - con_name: IOT74
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  74
+     ipaddr: 10.74.0.9/23
+     gwaddr: 10.74.0.1
+
+   - con_name: KUBE118
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id:  118
+     ipaddr: 10.118.0.9/23
+     gwaddr: 10.118.0.1
+

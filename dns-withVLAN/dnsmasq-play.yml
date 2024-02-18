@@ -1,0 +1,68 @@
+#
+# Experiments in ANSIBLE
+# This is the second phase of building dnsmasq for VLANS
+#
+# The first phase was: rasppi-vlan.ym
+# This installed: 
+#     dnsutils, dnsmasq, vim, curl, apt-transport-https, brave
+# After installing the software:
+#     networking was switched from DHCP to static
+#     VLANS connections were created for each VLAN on 10.XXX.0.y/1 
+#
+# Second phase:
+#   1. Name the host:
+#   2. get dnsmasq running
+#
+- hosts: dnsvlan1
+  become: yes
+  vars_files:
+    - dns-play-variables.yml    
+  tasks:
+    - name: Test integory_hostname
+      debug: var=inventory_hostname
+
+    - name: Ping the static address {{ ansible_host }}
+      ansible.builtin.ping:
+
+# Set the hostname for the DNS server        
+    - name: Set the hostname
+      ansible.builtin.hostname:
+        name: "{{ item.host_name }}"
+      loop: "{{ dnsHosts }}"
+
+# Copy the dnsmasq-RPDNS1.base
+    - name: Copy dnsmasq.RPDNS1.base for RPDNS1 
+      copy:
+        src: ./files/dnsmasq-RPDNS1.base
+        dest: /etc/dnsmasq.base
+      when: inventory_hostname == "rpdnsvlan1"
+
+# Copy the dnsmasq-RPDNS2.base
+    - name: Copy dnsmasq.RPDNS2.base for RPDNS2 
+      copy:
+        src: ./files/dnsmasq-RPDNS2.base
+        dest: /etc/dnsmasq.base
+      when: inventory_hostname == "rpdnsvlan2"
+
+# Copy over the DNSMASQ.hosts
+    - name: copy dnsmasq.vlan.hosts
+      copy:
+        src: ./files/dnsmasq.vlan.hosts
+        dest: /etc/dnsmasq.hosts
+
+# Create dnsmasq.conf
+    - name: Create dnsmasq.conf
+      shell:
+#        cat /etc/dnsmasq.base /etc/dnsmasq.hosts > /etc/dnsmasq.conf
+        cat /etc/dnsmasq.base /etc/dnsmasq.hosts | sed 's/\r$//' > /etc/dnsmasq.conf
+
+    - name: Copy hosts
+      copy:
+         src: ./etchosts.new
+         dest: /etc/hosts
+    - name: Start dnsmasq
+      service:
+         name=dnsmasq
+         state=started
+         enabled=yes
+

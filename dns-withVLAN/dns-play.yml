@@ -1,109 +1,123 @@
-#- hosts: dns2
-#- hosts: dns1ping
-#- hosts: alldns
-- hosts: dnsVlan1
+# Experiments in Ansible
+# At this point, the RP4 has a DHCP defined IP coming over from
+# UniFi.
+# The machine is running bookwork.
+# SSH, VNC are enabled
+# fedavis is the primary user
+# ansiuser2 is a user defined to be able to run ansible commands
+# fedavis and ansiuser2 are in sudo, with NOPASSWD
+#
+# Tasks:
+#    1.   Add repo for brave
+#    2.   Install dnsutils, dnsmasq, vim, curl, apt-transport-https, brave-browser
+#    3.   Drop all the vlans from the dictionary vlans in "dns-play-variables.yml"
+#
+- hosts: dnsvlan1dhcp
   become: yes
+  vars_files:
+    - dns-play-variables.yml    
   tasks:
-    - name: Test inventory_hostname
-      debug: var=inventory_hostname
-# Make sure that dhcpcd5 is installed
-    - name: Install dhcpcd5
+    # We are going to add the repo key for brave 
+    - name: Add the brave rep  key
+      ansible.builtin.shell: 
+        curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+
+# Install dnsutils, dnsmasq, vim
+    - name: Install dnsutils, dnsmasq, vim
       apt:
         state: latest
         update_cache: true
         pkg:
-        - dhcpcd5
-
-# Hostnames        
-    - name: set Hostname for dns1
-      shell:
-        hostnamectl set-hostname rpdnsVlan1
-      when: inventory_hostname == "rpdnsVlan1"
-
-# - Leaving IP as set.  Ubiquiti Cloudkey 
-# IP Address
-    - name: Copy IP setup for dns1
-      copy: src=./rpdns1.dhcpcd.conf dest=/etc/dhcpcd.conf
-      when: inventory_hostname == "rpdns1"
-
-    - name: Copy IP setup for dns2
-      copy: src=./rpdns2.dhcpcd.conf dest=/etc/dhcpcd.conf  
-      when: inventory_hostname == "rpdns2"
-
-    - name: Copy IP setup for dnsclust
-      copy: src=./rpdnsclust.dhcpcd.conf dest=/etc/dhcpcd.conf
-      when: inventory_hostname == "rpdnsclust"
-
-# Install DNSMASQ, VIM , DNSUTILS
-    - name: Install dnsmasq, vim, dnsutils
-      apt:
-        state: latest
-        update_cache: true
-        pkg:
+        - dnsutils
         - dnsmasq
         - vim
-        - dnsutils
-
-# Copy the dnsmasq.base
-    - name: Copy dnsmasq.base for dns1
-      copy:
-         src: ./dnsmasq1.base
-         dest: /etc/dnsmasq.base
-      when: inventory_hostname == "rpdns1"
-
-    - name: Copy dnsmasq.base for dns2
-      copy:
-         src: ./dnsmasq2.base
-         dest: /etc/dnsmasq.base
-      when: inventory_hostname == "rpdns2"
-
-    - name: Copy dnsmasq.base for dnsclust
-      copy:
-         # We use dnsmasq1.base as the source, dnsmasq2 is configured for DHCP
-         # We will change this in jekyll as an add on
-         src: ./dnsmasq1.base
-         dest: /etc/dnsmasq.base
-      when: inventory_hostname == "rpdnsclust"
-
-# Copy over the DNSMASQ.hosts
-    - name: Copy dnsmasq.hosts
-      copy:
-         src: ./dnsmasq.hosts
-         dest: /etc/dnsmasq.hosts
-
-    - name: Create dnsmasq.conf
-      shell:
-        cat /etc/dnsmasq.base /etc/dnsmasq.hosts > /etc/dnsmasq.conf
+        - apt-transport-https
+        - curl
+        - brave-browser
+## Display dictionary elements from a list of VLAN
+#    - name: Display VLAN info
+#      debug:
+#        msg: "nmcli con add type vlan con-name {{ item.con_name }} dev {{ item.dev }} id {{ item.id }} {{ item.iptype }} {{ item.ipaddr }} {{ item.gwtype }} {{ item.gwaddr }}"
+#      loop: "{{ vlans }}" 
 
 
-    - name: Copy hosts
-      copy:
-         src: ./etchosts.new
-         dest: /etc/hosts
-    - name: Start dnsmasq
-      service:
-         name=dnsmasq
-         state=started
-         enabled=yes
-#    - name: Add Resolv.conf entries
-#      shell: |
-#         nmcli connection modify 'Wired connection 1' ipv4.dns 127.0.0.1
-#         nmcli connection modify 'Wired connection 1' ipv4.dns-options trust-ad
-#         nmcli connection modify 'Wired connection 1' ipv4.ignore-auto-dns yes
-#         nmcli connection modify 'Wired connection 1' ipv6.dns ::1
-#         nmcli connection modify 'Wired connection 1' ipv6.dns-options trust-ad
-#         nmcli connection modify 'Wired connection 1' ipv6.ignore-auto-dns yes     
-#    - name: copy admin.conf to user's kube config
-#      copy:
-#        src: /etc/kubernetes/admin.conf
-#        dest: /home/ubuntu/.kube/config
-#        remote_src: yes
-#        owner: ubuntu
+## Delete the VLAN id
+#    - name: Delete the VLAN id
+#      nmcli:
+#        type: vlan
+#        conn_name: "VLAN{{ item }}" 
+#        state: 'absent'
+#      loop:
+#        - 74
+
+# Drop all the VLANs in the list
+    - name: Drop the VLAN list
+      nmcli:
+        type: vlan
+        conn_name: "{{ item.con_name }}"
+        state: 'absent'
+      loop: "{{ vlans }}"
+          
+# Delete the wired connection,  add the connection, restart
+    - name: Drop dynamic wired connection, add static wired connection, set IP and GW
+      shell: "nmcli con del \"Wired connection 1\"; nmcli connection add type ethernet con-name \"Wired connection 1\" ifname eth0;nmcli c mod \"Wired connection 1\" ip4 {{ item.host_static }}/16 gw4 10.1.0.1"
+      loop: "{{ dnsHosts }}"
+      args:
+        executable: /bin/bash
+      async: 100
+      poll: 0
+# Restart the connection
+    - name: Restart static connection
+      shell: "nmcli c down \"Wired connection 1\" | nmcli c up \"Wired connection 1\""
+      args:
+        executable: /bin/bash
+      async: 100
+      poll: 0
+# Restart the connection
+#    - name: Restart networking service
+#      service:
+#        name: networking
+#        state: restarted
+          
+    - name: set_fact for the nodes' new IP address
+      set_fact:
+        ansible_host: "{{ item.host_static }}"
+      loop: "{{ dnsHosts }}"
+#    - name: wait_for ssh port access
+#      local_action:
+#        module: wait_for
+#        host: "{{ ansible_host }}"
+#        port: 22
+#        delay: 3
+#        timeout: 20
+#        state: started
+#      register: network_responding
+    - name: Wait for SSH to come back
+      wait_for_connection:
+        delay: 5
+        timeout: 60
+
+# Ping the new static IP
+    - name: Ping the static address {{ ansible_host }}
+      ansible.builtin.ping: 
+
+# Display dictionary elements from a list of VLAN
+    - name: Display remapped ansible_host
+      debug:
+        msg: "ansible_host={{ ansible_host }}"
+
 #
-#    - name: install Pod network
-#      become: yes
-#      become_user: ubuntu
-#      shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.log
-#      args:
-#        chdir: $HOME
-#        creates: pod_network_setup.log
+# Create the VLANs
+    - name: Create VLANs
+      shell: "nmcli con add type vlan con-name {{ item.con_name }} dev {{ item.dev }} id {{ item.id }} {{ item.iptype }} {{ item.ipaddr }} {{ item.gwtype }} {{ item. gwaddr }}"
+      loop: "{{ vlans }}"
+      args:
+        executable: /bin/bash
+      async: 100
+      poll: 0
+
+# Restart the connection
+    - name: Restart networking service
+      service:
+        name: networking
+        state: restarted

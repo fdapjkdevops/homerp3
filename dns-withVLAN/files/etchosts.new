@@ -1,0 +1,9 @@
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+
+10.1.0.19       RPDNS1
+10.1.0.18       RPDNS2
+#192.168.43.2	RPDNS1
+#192.168.43.3	RPDNS2

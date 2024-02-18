@@ -1,5 +1,23 @@
-[dnsVlan1]
-rpdnsVlan1 ansible_host=192.168.1.50
+[dnsvlan1]
+# It appears that we may distribute from dhcp.
+# NetworkManager can do VLANs upon the top of a dynamic IP
+rpdnsvlan1 ansible_host=10.1.0.19
+
+[dnsvlan2]
+# It appears that we may distribute from dhcp.
+# NetworkManager can do VLANs upon the top of a dynamic IP
+rpdnsvlan2 ansible_host=10.1.0.18
+
+[dnsvlan1dhcp]
+rpdnsvlan1dhcp ansible_host=10.1.0.50
+
+[dnsvlan2dhcp]
+rpdnsvlan2dhcp ansible_host=10.1.0.49
 
 [allnodes]
-192.168.1.50
+10.1.0.19
+10.1.0.18
+
+[allnodesdhcp]
+10.1.0.50
+10.1.0.49
