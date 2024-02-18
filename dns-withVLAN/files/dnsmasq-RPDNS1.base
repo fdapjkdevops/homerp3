@@ -139,7 +139,7 @@ interface=eth0.118
 #listen-address=
 # FED 2023-12-23
 #listen-address=::1,127.0.0.1,10.1.0.19
-listen-address=::1,127.0.0.1,10.1.0.19,10.8.0.9,10.43.0.9,10.66.0.1,10.69.0.1,10.71.0.9,10.74.0.9,10.118.0.9
+listen-address=::1,127.0.0.1,10.1.0.19,10.8.0.9,10.43.0.9,10.66.0.9,10.69.0.9,10.71.0.9,10.74.0.9,10.118.0.9
 
 # If you want dnsmasq to provide only DNS service on an interface,
 # configure it as shown above, and then use the following line to
@@ -200,20 +200,50 @@ expand-hosts
 #   16 - swap-server
 #   17 - root-path
 #
-# metasploit: Brinks
+# SSID: tortoise
+# VLAN: forrest8
+dhcp-range=FORREST8,10.8.0.10,10.8.0.239,255.255.255.0,1h
+dhcp-option=FORREST8,option:router,10.8.0.1
+dhcp-option=FORREST8,option:netmask,255.255.255.0
+#dhcp-option=FORREST8,option:domain-name,forrest8.mshome.loc
+
+# SSID: StingRay
+# VLAN: HOME43
+dhcp-range=HOME43,10.43.0.10,10.43.0.239,255.255.255.0,1h
+dhcp-option=HOME43,option:router,10.43.0.1
+dhcp-option=HOME43,option:netmask,255.255.255.0
+#dhcp-option=HOME43,option:domain-name,home43.mshome.loc
+
+# SSID: Bowser
+# VLAN: RENTER66
+dhcp-range=RENTER66,10.66.0.10,10.66.0.239,255.255.255.0,1h
+dhcp-option=RENTER66,option:router,10.66.0.1
+dhcp-option=RENTER66,option:netmask,255.255.255.0
+#dhcp-option=RENTER66,option:domain-name,renter66.mshome.loc
+
+# SSID: Metasploit
+# VLAN: BRINKS69
 dhcp-range=BRINKS69,10.69.0.10,10.69.0.239,255.255.255.0,1h
 dhcp-option=BRINKS69,option:router,10.69.0.1
 dhcp-option=BRINKS69,option:netmask,255.255.255.0
-#dhcp-option=BRINKS69,option:domain-name,brinks.mshome.loc
+#dhcp-option=BRINKS69,option:domain-name,brinks69.mshome.loc
 
-# sonic: Guest
+# SSID: Sonic
+# VLAN: GUEST71
 dhcp-range=GUEST71,10.71.0.10,10.71.0.239,255.255.255.0,1h
 dhcp-option=GUEST71,option:router,10.71.0.1
 dhcp-option=GUEST71,option:netmask,255.255.255.0
-#dhcp-option=GUEST71,
+#dhcp-option=GUEST71,option:domain-name,guest71.mshome.loc
 
 
-# FED 31-Dec-2023 STOP
+# SSID: Riley24
+# VLAN: IOT74
+dhcp-range=IOT74,10.74.0.10,10.74.0.239,255.255.255.0,1h
+dhcp-option=IOT74,option:router,10.74.0.1
+dhcp-option=IOT74,option:netmask,255.255.255.0
+#dhcp-option=IOT74,option:domain-name,iot.mshome.loc
+
+# FED 18-Feb-2024 STOP
 # This is an example of a DHCP range where the netmask is given. This
 # is needed for networks we reach the dnsmasq DHCP server via a relay
 # agent. If you don't know what a DHCP relay agent is, you probably

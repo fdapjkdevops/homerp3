@@ -31,7 +31,7 @@ vlans:
      gwtype: gw4
      dev: eth0
      id:  43
-     ipaddr: 10.43.0.9/23
+     ipaddr: 10.43.0.9/24
      gwaddr: 10.43.0.1
 
    - con_name: RENTER66
@@ -47,7 +47,7 @@ vlans:
      gwtype: gw4
      dev: eth0
      id:  69
-     ipaddr: 10.69.0.9/23
+     ipaddr: 10.69.0.9/24
      gwaddr: 10.69.0.1
 
    - con_name: GUEST71
@@ -55,7 +55,7 @@ vlans:
      gwtype: gw4
      dev: eth0
      id:  71
-     ipaddr: 10.71.0.9/23
+     ipaddr: 10.71.0.9/24
      gwaddr: 10.71.0.1
 
    - con_name: IOT74
@@ -63,7 +63,7 @@ vlans:
      gwtype: gw4
      dev: eth0
      id:  74
-     ipaddr: 10.74.0.9/23
+     ipaddr: 10.74.0.9/24
      gwaddr: 10.74.0.1
 
    - con_name: KUBE118
@@ -71,6 +71,6 @@ vlans:
      gwtype: gw4
      dev: eth0
      id:  118
-     ipaddr: 10.118.0.9/23
+     ipaddr: 10.118.0.9/24
      gwaddr: 10.118.0.1
 
