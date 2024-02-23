@@ -131,6 +131,7 @@ interface=eth0.69
 interface=eth0.71
 interface=eth0.74
 interface=eth0.118
+interface=eth0.188
 
 # Or you can specify which interface _not_ to listen on
 #except-interface=
@@ -139,7 +140,7 @@ interface=eth0.118
 #listen-address=
 # FED 2023-12-23
 #listen-address=::1,127.0.0.1,10.1.0.19
-listen-address=::1,127.0.0.1,10.1.0.19,10.8.0.9,10.43.0.9,10.66.0.9,10.69.0.9,10.71.0.9,10.74.0.9,10.118.0.9
+listen-address=::1,127.0.0.1,10.1.0.19,10.8.0.9,10.43.0.9,10.66.0.9,10.69.0.9,10.71.0.9,10.74.0.9,10.118.0.9,10.188.0.9
 
 # If you want dnsmasq to provide only DNS service on an interface,
 # configure it as shown above, and then use the following line to
@@ -242,6 +243,20 @@ dhcp-range=IOT74,10.74.0.10,10.74.0.239,255.255.255.0,1h
 dhcp-option=IOT74,option:router,10.74.0.1
 dhcp-option=IOT74,option:netmask,255.255.255.0
 #dhcp-option=IOT74,option:domain-name,iot.mshome.loc
+
+# SSID: --
+# VLAN: KUBE118
+dhcp-range=KUBE118,10.118.0.10,10.118.0.239,255.255.255.0,1h
+dhcp-option=KUBE118,option:router,10.118.0.1
+dhcp-option=KUBE118,option:netmask,255.255.255.0
+#dhcp-option=KUBE118,option:domain-name,kube.mshome.loc
+
+# SSID: --
+# VLAN: BCBST188
+dhcp-range=BCBST188,10.188.0.10,10.188.0.239,255.255.255.0,1h
+dhcp-option=BCBCST188,option:router,10.188.0.1
+dhcp-option=BCBCS188,option:netmask,255.255.255.0
+#dhcp-option=IOT118,option:domain-name,bcbst.mshome.loc
 
 # FED 18-Feb-2024 STOP
 # This is an example of a DHCP range where the netmask is given. This

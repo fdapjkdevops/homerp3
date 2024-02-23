@@ -74,3 +74,11 @@ vlans:
      ipaddr: 10.118.0.9/24
      gwaddr: 10.118.0.1
 
+   - con_name: BCBST188
+     iptype: ip4
+     gwtype: gw4
+     dev: eth0
+     id: 188
+     ipaddr: 10.188.0.9/24
+     gwaddr: 10.188.0.1
+
