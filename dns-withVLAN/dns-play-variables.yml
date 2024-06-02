@@ -26,7 +26,7 @@ vlans:
      ipaddr: 10.8.0.9/24
      gwaddr: 10.8.0.1
 
-   - con_name: STINGRAY43
+   - con_name: HOME43
      iptype: ip4
      gwtype: gw4
      dev: eth0
@@ -58,13 +58,13 @@ vlans:
      ipaddr: 10.71.0.9/24
      gwaddr: 10.71.0.1
 
-   - con_name: IOT74
+   - con_name: IOT24
      iptype: ip4
      gwtype: gw4
      dev: eth0
-     id:  74
-     ipaddr: 10.74.0.9/24
-     gwaddr: 10.74.0.1
+     id:  24
+     ipaddr: 10.24.0.9/24
+     gwaddr: 10.24.0.1
 
    - con_name: KUBE118
      iptype: ip4

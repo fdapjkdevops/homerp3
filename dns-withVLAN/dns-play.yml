@@ -12,7 +12,7 @@
 #    2.   Install dnsutils, dnsmasq, vim, curl, apt-transport-https, brave-browser
 #    3.   Drop all the vlans from the dictionary vlans in "dns-play-variables.yml"
 #
-- hosts: dnsvlan1dhcp
+- hosts: dnsvlan1
   become: yes
   vars_files:
     - dns-play-variables.yml    
@@ -60,7 +60,7 @@
           
 # Delete the wired connection,  add the connection, restart
     - name: Drop dynamic wired connection, add static wired connection, set IP and GW
-      shell: "nmcli con del \"Wired connection 1\"; nmcli connection add type ethernet con-name \"Wired connection 1\" ifname eth0;nmcli c mod \"Wired connection 1\" ip4 {{ item.host_static }}/16 gw4 10.1.0.1"
+      shell: "nmcli con del \"Wired connection 1\"; nmcli connection add type ethernet con-name \"Wired connection 1\" ifname eth0;nmcli c mod \"Wired connection 1\" ip4 {{ item.host_static }}/24 gw4 10.1.0.1"
       loop: "{{ dnsHosts }}"
       args:
         executable: /bin/bash

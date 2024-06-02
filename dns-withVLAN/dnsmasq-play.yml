@@ -18,7 +18,7 @@
   vars_files:
     - dns-play-variables.yml    
   tasks:
-    - name: Test integory_hostname
+    - name: Test inventory_hostname
       debug: var=inventory_hostname
 
     - name: Ping the static address {{ ansible_host }}
