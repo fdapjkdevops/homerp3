@@ -139,21 +139,22 @@ interface=eth0.188
 # you use this.)
 #listen-address=
 # FED 2023-12-23
-#listen-address=::1,127.0.0.1,10.1.0.19
-listen-address=::1,127.0.0.1,10.1.0.19,10.8.0.9,10.24.0.9,10.43.0.9,10.66.0.9,10.69.0.9,10.71.0.9,10.118.0.9,10.188.0.9
+#listen-address=::1,127.0.0.1,10.1.0.18
+listen-address=::1,127.0.0.1,10.1.0.18,10.8.0.8,10.24.0.8,10.43.0.8,10.66.0.8,10.69.0.8,10.71.0.8,10.118.0.8,10.188.0.8
 
 # If you want dnsmasq to provide only DNS service on an interface,
 # configure it as shown above, and then use the following line to
 # disable DHCP and TFTP on it.
-#no-dhcp-interface=eth0
-#no-dhcp-interface=eth0.8
-#no-dhcp-interface=eth0.43
-#no-dhcp-interface=eth0.66
-#no-dhcp-interface=eth0.69
-#no-dhcp-interface=eth0.71
-#no-dhcp-interface=eth0.24
-#no-dhcp-interface=eth0.118
-#no-dhcp-interface=eth0.188
+no-dhcp-interface=eth0
+no-dhcp-interface=eth0.8
+no-dhcp-interface=eth0.43
+no-dhcp-interface=eth0.66
+no-dhcp-interface=eth0.69
+no-dhcp-interface=eth0.71
+no-dhcp-interface=eth0.24
+no-dhcp-interface=eth0.118
+no-dhcp-interface=eth0.188
+
 
 # On systems which support it, dnsmasq binds the wildcard address,
 # even when it is listening on only some interfaces. It then discards
